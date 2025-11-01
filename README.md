@@ -2,7 +2,6 @@
 
 [![Ultimo Commit](https://img.shields.io/github/commit-date/lwsioo/murettoPG.svg?style=flat-square)](https://github.com/lwsioo/murettoPG/commits/main)
 [![Linguaggi](https://img.shields.io/github/languages/top/lwsioo/murettoPG.svg?style=flat-square)](https://github.com/lwsioo/murettoPG)
-[![Code Quality](https://img.shields.io/codeclimate/maintainability/lwsioo/murettoPG.svg?style=flat-square)](https://codeclimate.com/github/lwsioo/murettoPG)
 
 Benvenuto in **MurettoPG**, il sito web dedicato alla gestione dei tornei di freestyle rap per il Muretto di Perugia. Questo progetto nasce per facilitare l'organizzazione e il monitoraggio delle competizioni di freestyle, offrendo al contempo un generatore casuale di parole e argomenti per le sfide.
 
