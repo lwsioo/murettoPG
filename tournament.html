@@ -1,0 +1,1020 @@
+<!DOCTYPE html>
+<html lang="it">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="shortcut icon" href="logo.jpg" type="image/x-icon" />
+    <title>Torneo Freestyle — Muretto di Perugia</title>
+    <style>
+      /* --- Tema Bianco Rosso per il Muretto di Perugia --- */
+      :root {
+        --bg: #ffffff;
+        --panel: #f8f8f8;
+        --muted: #666666;
+        --text: #222222;
+        --accent: #e30613; /* Rosso Perugia */
+        --accent-2: #e30613; /* Rosso Perugia */
+        --danger: #e30613; /* Rosso Perugia */
+        --line: #dddddd;
+        --winner: #fff0f0; /* Sfondo rosso chiaro per vincitore */
+        --border-radius: 8px;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu,
+          Cantarell, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji",
+          "Segoe UI Emoji";
+        color: var(--text);
+        background: var(--bg);
+        display: flex;
+        flex-direction: column;
+      }
+
+      header {
+        position: sticky;
+        top: 0;
+        z-index: 3;
+        background: linear-gradient(
+          180deg,
+          rgba(255, 255, 255, 0.95),
+          rgba(255, 255, 255, 0.85)
+        );
+        backdrop-filter: blur(4px);
+        border-bottom: 2px solid var(--accent);
+      }
+
+      .bar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 12px;
+      }
+
+      .back {
+        color: var(--text);
+        text-decoration: none;
+        padding: 8px 12px;
+        border: 1px solid var(--line);
+        border-radius: var(--border-radius);
+        background: var(--panel);
+        transition: all 0.2s;
+        flex-shrink: 0;
+      }
+
+      .back:hover {
+        border-color: var(--accent);
+      }
+
+      .containerRoba {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        flex-grow: 1;
+        margin: 0 10px 0 0px;
+      }
+
+      .title {
+        font-weight: 700;
+        font-size: 18px;
+        color: var(--accent);
+        margin-bottom: 5px;
+      }
+
+      .bar img {
+        max-width: 60px;
+        height: auto;
+      }
+
+      main {
+        padding: 12px;
+        flex: 1;
+        display: grid;
+        gap: 12px;
+      }
+
+      .card {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: var(--border-radius);
+        padding: 12px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+      }
+
+      .card h2 {
+        margin: 0 0 6px;
+        font-size: 16px;
+        color: var(--accent);
+      }
+
+      label {
+        font-size: 13px;
+        color: var(--muted);
+        display: block;
+        margin: 8px 0 4px;
+      }
+
+      textarea,
+      select,
+      input[type="number"] {
+        width: 100%;
+        padding: 10px 12px;
+        border-radius: var(--border-radius);
+        border: 1px solid var(--line);
+        background: #ffffff;
+        color: var(--text);
+        font-size: 15px;
+        transition: border-color 0.2s;
+      }
+
+      textarea:focus,
+      select:focus,
+      input[type="number"]:focus {
+        outline: none;
+        border-color: var(--accent);
+      }
+
+      textarea {
+        min-height: 120px;
+        resize: vertical;
+      }
+
+      .row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+      }
+
+      button {
+        width: 100%;
+        padding: 12px;
+        border-radius: var(--border-radius);
+        border: 1px solid var(--line);
+        background: #ffffff;
+        color: var(--text);
+        font-weight: 600;
+        font-size: 15px;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+
+      button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      button.primary {
+        background: var(--accent);
+        border-color: var(--accent);
+        color: white;
+      }
+
+      button.success {
+        background: var(--accent-2);
+        border-color: var(--accent-2);
+        color: white;
+      }
+
+      button.danger {
+        background: var(--danger);
+        border-color: var(--danger);
+        color: white;
+      }
+
+      .help {
+        font-size: 12px;
+        color: var(--muted);
+        margin-top: 6px;
+      }
+
+      /* --- Tabellone stile "albero" a colonne --- */
+      .bracket-wrapper {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        margin-top: 15px;
+      }
+
+      .bracket {
+        display: grid;
+        grid-auto-flow: column;
+        grid-auto-columns: minmax(220px, 1fr);
+        gap: 12px;
+        padding-bottom: 8px;
+      }
+
+      .round {
+        display: grid;
+        align-content: start;
+        gap: 10px;
+      }
+
+      .round > .round-title {
+        font-size: 13px;
+        color: var(--accent);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        font-weight: bold;
+        text-align: center;
+        padding: 5px;
+        background-color: #fff0f0;
+        border-radius: var(--border-radius);
+      }
+
+      .match {
+        position: relative;
+        background: #ffffff;
+        border: 1px solid var(--line);
+        border-radius: var(--border-radius);
+        padding: 8px;
+        display: grid;
+        gap: 6px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+      }
+
+      .participant {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        padding: 10px 12px;
+        background: #ffffff;
+        border: 1px solid var(--line);
+        border-radius: var(--border-radius);
+        min-height: 40px;
+        transition: all 0.2s;
+      }
+
+      .participant:hover {
+        border-color: var(--accent);
+      }
+
+      .participant[aria-disabled="true"] {
+        opacity: 0.6;
+        pointer-events: none;
+      }
+
+      .participant .name {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .participant .advance {
+        font-size: 12px;
+        color: var(--muted);
+      }
+
+      .participant.is-winner {
+        background: var(--winner);
+        border-color: var(--accent);
+        font-weight: bold;
+      }
+
+      .empty {
+        opacity: 0.5;
+        font-style: italic;
+      }
+
+      /* Linee decorative verticali */
+      .match::before {
+        content: "";
+        position: absolute;
+        left: -6px;
+        top: 10px;
+        bottom: 10px;
+        width: 2px;
+        background: linear-gradient(transparent, var(--accent), transparent);
+        border-radius: 2px;
+      }
+
+      /* --- Footer / stato --- */
+      footer {
+        padding: 12px;
+        text-align: center;
+        border-top: 1px solid var(--line);
+        background: var(--panel);
+      }
+
+      .status {
+        font-size: 13px;
+        color: var(--muted);
+      }
+
+      .winner-badge {
+        display: inline-block;
+        padding: 6px 10px;
+        border-radius: 999px;
+        background: var(--winner);
+        color: var(--accent);
+        border: 1px solid var(--accent);
+        font-weight: 600;
+      }
+
+      @media (min-width: 720px) {
+        .row {
+          grid-template-columns: repeat(3, 1fr);
+        }
+
+        .bar img {
+          max-width: 80px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="bar">
+        <div class="containerRoba">
+          <a href="index.html"><img src="logo.jpg" alt="logoMuretto" /></a>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <!-- Configurazione / input -->
+      <section class="card" id="config">
+        <h2>Impostazioni</h2>
+
+        <label for="names">Nomi MC (uno per riga)</label>
+        <textarea
+          id="names"
+          placeholder="Es.
+MC Alpha
+MC Beta
+MC Gamma
+MC Delta"
+        ></textarea>
+        <div class="help">
+          Suggerimento: incolla la lista completa, ogni riga è un partecipante.
+        </div>
+
+        <label for="mode">Modalità</label>
+        <select id="mode">
+          <option value="classic" default>1v1 Classico</option>
+          <option value="rumble">Rumble 4vs</option>
+        </select>
+        <!-- Campo numerico per il rumble: mostra solo se selezionato rumble -->
+        <label for="passRumbleCount" id="labelPassRumble" style="display: none"
+          >MC che passano da ogni rumble</label
+        >
+        <input
+          type="number"
+          id="passRumbleCount"
+          min="1"
+          max="4"
+          style="display: none"
+        />
+        <div class="help" id="rumbleHelp" style="display: none">
+          Inserisci quanti partecipanti passano da ogni rumble.
+        </div>
+
+        <div class="row">
+          <button id="btn-generate" class="primary">Genera tabellone</button>
+          <button id="btn-undo">Annulla ultima</button>
+          <button id="btn-reset" class="danger">Cancella tutto</button>
+        </div>
+        <div class="help">
+          Il torneo viene salvato automaticamente in questo dispositivo.
+        </div>
+      </section>
+
+      <!-- Tabellone -->
+      <section class="card bracket-wrapper">
+        <div class="bracket" id="bracket" aria-live="polite"></div>
+        <div class="status" id="status"></div>
+      </section>
+    </main>
+
+    <script>
+      /*
+      ==========================
+      LOGICA TORNEO — OVERVIEW
+      ==========================
+      - Input: lista nomi, modalità (classic/rumble), parametri rumble
+      - Genera rounds (colonne): ogni round è un array di gruppi (match/rumble)
+      - Ogni gruppo ha: slots (partecipanti o null), winnersIds (Set), maxWinners
+      - Click su partecipante: se gruppo non ha raggiunto maxWinners, avanza nel round successivo
+      - Mappatura vincitori → round successivo:
+          Classic: gruppo g del round r va nel gruppo floor(g/2) del round r+1,
+                   slot = g % 2 (accoppiamento ad albero classico)
+          Rumble: i vincitori dei gruppi riempiono sequenzialmente gli slot del round successivo
+      - Undo: stack di azioni (dalla selezione più recente) → ripristina stato
+      - Persistenza: salvataggio JSON in localStorage ad ogni modifica
+      */
+
+      // ----------------------- Utilità -----------------------
+      const $ = (sel, root = document) => root.querySelector(sel);
+      const $$ = (sel, root = document) =>
+        Array.from(root.querySelectorAll(sel));
+
+      function uid() {
+        return "p" + Math.random().toString(36).slice(2, 9);
+      }
+
+      function shuffle(arr) {
+        // Fisher-Yates
+        for (let i = arr.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [arr[i], arr[j]] = [arr[j], arr[i]];
+        }
+        return arr;
+      }
+
+      function saveState() {
+        localStorage.setItem("torneoFreestyleState", JSON.stringify(state));
+      }
+      function loadState() {
+        const raw = localStorage.getItem("torneoFreestyleState");
+        if (!raw) return null;
+        try {
+          return JSON.parse(raw);
+        } catch {
+          return null;
+        }
+      }
+      function clearState() {
+        localStorage.removeItem("torneoFreestyleState");
+      }
+
+      // ----------------------- Stato -----------------------
+      let state = {
+        mode: "classic",
+        namesInput: "",
+        participants: [],
+        rounds: [],
+        history: [],
+        winnerId: null,
+        rumbleWinners: 1, // Numero di vincitori da ciascuna rumble (default 1)
+      };
+
+      // Group: { slots: (Participant|null)[], winnersIds: Set<string>, maxWinners: number }
+
+      // ----------------------- Costruzione rounds -----------------------
+
+      // ----------------------- Fasi classiche 1v1 (con 3-way se dispari) -----------------------
+      function buildClassicPhases(startingCount, roundsRef) {
+        // Crea i round successivi finché resta un solo gruppo (finale)
+        let currCount = startingCount;
+
+        while (currCount > 1) {
+          // Indici dei gruppi sorgente del round precedente: 0..currCount-1
+          const order = Array.from({ length: currCount }, (_, i) => i);
+          // Randomizza l’ordine dei vincitori per evitare re-match immediati
+          shuffle(order);
+
+          // Suddividi in coppie; se dispari, crea una 3-way (una sola)
+          const chunks = [];
+          if (order.length === 3) {
+            chunks.push(order.slice(0, 3)); // unica 3-way
+          } else {
+            let triple = null;
+            if (order.length % 2 === 1) {
+              // tieni gli ultimi 3 per la 3-way
+              triple = order.splice(-3);
+            }
+            for (let i = 0; i < order.length; i += 2) {
+              chunks.push([order[i], order[i + 1]]);
+            }
+            if (triple) chunks.push(triple); // 3-way in coda (puoi inserirla anche in posizione random)
+          }
+
+          // Crea il round successivo con mapping esplicito (poolSources)
+          const next = chunks.map((srcIdxs) => ({
+            slots: new Array(srcIdxs.length).fill(null),
+            winnersIds: [],
+            maxWinners: 1,
+            poolSources: srcIdxs.map((gi) => ({ fromGroup: gi })),
+          }));
+
+          roundsRef.push(next);
+          currCount = next.length;
+        }
+      }
+
+      function buildClassicFromPool(countNext, winnersPool, rounds) {
+        const firstClassic = [];
+        let i = 0;
+
+        if (countNext === 3) {
+          firstClassic.push({
+            slots: [null, null, null],
+            winnersIds: [],
+            maxWinners: 1,
+            poolSources: winnersPool.slice(0, 3),
+          });
+          i = 3;
+        } else {
+          while (i < countNext) {
+            if (i + 1 < countNext) {
+              firstClassic.push({
+                slots: [null, null],
+                winnersIds: [],
+                maxWinners: 1,
+                poolSources: winnersPool.slice(i, i + 2),
+              });
+              i += 2;
+            } else {
+              const prev = firstClassic.pop();
+              prev.slots = [null, null, null];
+              prev.poolSources.push(winnersPool[i]);
+              firstClassic.push(prev);
+              i += 1;
+            }
+          }
+        }
+
+        rounds.push(firstClassic);
+        buildClassicPhases(firstClassic.length, rounds);
+      }
+
+      function buildInitialRounds(participants) {
+        const rounds = [];
+        const mode = state.mode;
+        const pushRound = (groups) => rounds.push(groups);
+        const makeGroup = (arr, maxW) => ({
+          slots: arr.slice(),
+          winnersIds: [],
+          maxWinners: Math.max(1, Math.min(arr.length, maxW)),
+        });
+
+        // 🔀 Randomizza subito i partecipanti
+        const shuffledParticipants = shuffle([...participants]);
+
+        if (mode === "rumble") {
+          const groups = [];
+          const N = shuffledParticipants.length;
+          const maxPerGroup = state.rumbleWinners || 1;
+
+          if (N > 4 && N % 4 === 1) {
+            groups.push(
+              makeGroup(shuffledParticipants.slice(0, 5), maxPerGroup)
+            );
+            let i = 5;
+            while (i < N) {
+              groups.push(
+                makeGroup(shuffledParticipants.slice(i, i + 4), maxPerGroup)
+              );
+              i += 4;
+            }
+          } else {
+            for (let i = 0; i < N; i += 4) {
+              groups.push(
+                makeGroup(shuffledParticipants.slice(i, i + 4), maxPerGroup)
+              );
+            }
+          }
+
+          pushRound(groups);
+
+          // Costruisci il pool dei vincitori da randomizzare
+          const winnersPool = [];
+          groups.forEach((g, gi) => {
+            for (let k = 0; k < g.maxWinners; k++) {
+              winnersPool.push({ fromGroup: gi });
+            }
+          });
+
+          shuffle(winnersPool);
+
+          const countNext = winnersPool.length;
+          buildClassicFromPool(countNext, winnersPool, rounds);
+
+          return rounds;
+        }
+
+        // CLASSIC ----------------------------------
+        if (mode === "classic") {
+          const groups = [];
+          const N = shuffledParticipants.length;
+
+          if (N >= 3 && N % 2 === 1) {
+            const totalPairs = Math.floor(N / 2);
+            const tripleIndex = Math.floor(Math.random() * (totalPairs + 1));
+            let i = 0,
+              g = 0;
+            while (i < N) {
+              const remaining = N - i;
+              if (g === tripleIndex && remaining >= 3) {
+                groups.push(makeGroup(shuffledParticipants.slice(i, i + 3), 1));
+                i += 3;
+                g += 1;
+              } else {
+                const take = Math.min(2, remaining);
+                groups.push(
+                  makeGroup(shuffledParticipants.slice(i, i + take), 1)
+                );
+                i += take;
+                g += 1;
+              }
+            }
+          } else {
+            for (let i = 0; i < N; i += 2) {
+              const sz = Math.min(2, N - i);
+              groups.push(makeGroup(shuffledParticipants.slice(i, i + sz), 1));
+            }
+          }
+          pushRound(groups);
+
+          let countNext = groups.length;
+          buildClassicPhases(countNext, rounds);
+          return rounds;
+        }
+
+        return rounds;
+      }
+
+      // ----------------------- Rendering -----------------------
+      function render() {
+        // Aggiorna UI impostazioni
+        $("#names").value = state.namesInput;
+        $("#mode").value = state.mode;
+
+        // Mostra/nascondi campo numero per rumble
+        if (state.mode === "rumble") {
+          $("#labelPassRumble").style.display = "block";
+          $("#passRumbleCount").style.display = "block";
+          $("#rumbleHelp").style.display = "block";
+          $("#passRumbleCount").value = state.rumbleWinners || "";
+        } else {
+          $("#labelPassRumble").style.display = "none";
+          $("#passRumbleCount").style.display = "none";
+          $("#rumbleHelp").style.display = "none";
+        }
+
+        const bracket = $("#bracket");
+        bracket.innerHTML = "";
+
+        const rounds = state.rounds;
+        if (!rounds || !rounds.length) {
+          $("#status").innerHTML =
+            '<span class="help">Inserisci i nomi e premi "Genera tabellone".</span>';
+          return;
+        }
+
+        // Mostra round come colonne
+        rounds.forEach((groups, rIndex) => {
+          const col = document.createElement("div");
+          col.className = "round";
+          const title = document.createElement("div");
+          title.className = "round-title";
+          title.textContent =
+            rIndex === rounds.length - 1
+              ? "Finale"
+              : rIndex === 0
+              ? "Primo turno"
+              : `Turno ${rIndex + 1}`;
+          col.appendChild(title);
+
+          groups.forEach((group, gIndex) => {
+            const match = document.createElement("div");
+            match.className = "match";
+
+            group.slots.forEach((participant, sIndex) => {
+              const row = document.createElement("div");
+              row.className = "participant";
+              if (!participant) row.classList.add("empty");
+
+              const name = document.createElement("div");
+              name.className = "name";
+              name.textContent = participant
+                ? participant.name
+                : "— slot libero —";
+              row.appendChild(name);
+
+              // Etichetta avanzamento
+              const adv = document.createElement("div");
+              adv.className = "advance";
+              if (participant) {
+                adv.textContent =
+                  rIndex === rounds.length - 1 ? "Vincitore?" : "Avanza »";
+              } else {
+                adv.textContent = "";
+              }
+              row.appendChild(adv);
+
+              // Stato winner (se selezionato in questo gruppo)
+              if (participant && group.winnersIds.includes(participant.id)) {
+                row.classList.add("is-winner");
+              }
+
+              // Click per avanzare
+              if (participant) {
+                row.role = "button";
+                row.tabIndex = 0;
+                row.addEventListener("click", () =>
+                  onSelect(rIndex, gIndex, sIndex)
+                );
+                row.addEventListener("keypress", (e) => {
+                  if (e.key === "Enter") onSelect(rIndex, gIndex, sIndex);
+                });
+              } else {
+                row.setAttribute("aria-disabled", "true");
+              }
+
+              match.appendChild(row);
+            });
+
+            // Info su quanti passano da questo gruppo (maxWinners)
+            const info = document.createElement("div");
+            info.className = "help";
+            info.textContent = `Passano da questo gruppo: ${group.maxWinners}`;
+            match.appendChild(info);
+
+            col.appendChild(match);
+          });
+
+          bracket.appendChild(col);
+        });
+
+        // Stato finale
+        const status = $("#status");
+        if (state.winnerId) {
+          const winner = findParticipantById(state.winnerId);
+          status.innerHTML = `<span class="winner-badge">🏆 Vincitore: ${escapeHtml(
+            winner?.name || ""
+          )}</span>`;
+        } else {
+          status.innerHTML =
+            '<span class="help">Tocca un nome per farlo avanzare. Usa "Annulla" per tornare indietro.</span>';
+        }
+      }
+
+      function escapeHtml(str) {
+        return (str || "").replace(
+          /[&<>"]/g,
+          (s) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[s])
+        );
+      }
+
+      function findParticipantById(id) {
+        if (!id) return null;
+        for (const p of state.participants) if (p.id === id) return p;
+        return null;
+      }
+
+      // ----------------------- Selezione / avanzamento -----------------------
+      function onSelect(r, g, s) {
+        const rounds = state.rounds;
+        if (r >= rounds.length) return;
+        const group = rounds[r][g];
+        const participant = group.slots[s];
+        if (!participant) return;
+
+        // Se il gruppo ha già raggiunto il massimo, ignora
+        if (group.winnersIds.length >= group.maxWinners) return;
+        // Evita doppie selezioni dello stesso id nel gruppo
+        if (group.winnersIds.includes(participant.id)) return;
+
+        // Se è l'ultimo round → proclamazione vincitore
+        if (r === rounds.length - 1) {
+          group.winnersIds.push(participant.id);
+          state.winnerId = participant.id;
+          state.history.push({
+            type: "select-final",
+            from: { r, g, s, id: participant.id },
+          });
+          saveState();
+          render();
+          return;
+        }
+
+        // Determina la destinazione nel round successivo
+        const dest = computeNextDestination(r, g);
+        if (!dest) return;
+
+        const { groupIndex: dg, slotIndex: ds } = dest.nextSlotFor(group);
+        if (dg === -1 || ds === -1) return;
+
+        // Esegui avanzamento
+        rounds[r + 1][dg].slots[ds] = participant;
+        group.winnersIds.push(participant.id);
+
+        state.history.push({
+          type: "advance",
+          from: { r, g, s, id: participant.id },
+          to: { r: r + 1, g: dg, s: ds },
+        });
+        saveState();
+        render();
+      }
+
+      // Calcola la politica di instradamento verso il round r+1
+      function computeNextDestination(r, g) {
+        const rounds = state.rounds;
+        const mode = state.mode;
+        if (r >= rounds.length - 1) return null;
+
+        const nextRound = rounds[r + 1];
+
+        // Se il prossimo round ha un mapping esplicito (poolSources), usalo:
+        const hasPool = nextRound.some((grp) => Array.isArray(grp.poolSources));
+        if (hasPool) {
+          return {
+            nextSlotFor: () => {
+              for (let i = 0; i < nextRound.length; i++) {
+                const grp = nextRound[i];
+                const ps = grp.poolSources || [];
+                for (let j = 0; j < ps.length; j++) {
+                  if (ps[j] && ps[j].fromGroup === g && grp.slots[j] === null) {
+                    return { groupIndex: i, slotIndex: j };
+                  }
+                }
+              }
+              return { groupIndex: -1, slotIndex: -1 };
+            },
+          };
+        }
+
+        // Fallback: mappa 1v1 classica (solo se non abbiamo poolSources)
+        if (mode === "classic") {
+          const targetGroup = Math.floor(g / 2);
+          const targetSlot = g % 2;
+          return {
+            nextSlotFor: () => {
+              const grp = nextRound[targetGroup];
+              if (grp.slots[targetSlot] !== null)
+                return { groupIndex: -1, slotIndex: -1 };
+              return { groupIndex: targetGroup, slotIndex: targetSlot };
+            },
+          };
+        }
+
+        // Fallback Rumble sequenziale (non dovrebbe più servire, ma teniamolo)
+        return {
+          nextSlotFor: (_group) => {
+            let remaining = 0;
+            // calcola indice globale in base ai gruppi precedenti + quanti già avanzati nel gruppo corrente
+            const currentRound = rounds[r];
+            remaining =
+              currentRound
+                .slice(0, g)
+                .reduce((acc, grp) => acc + grp.maxWinners, 0) +
+              currentRound[g].winnersIds.length;
+
+            for (let i = 0; i < nextRound.length; i++) {
+              const slotsLen = nextRound[i].slots.length;
+              if (remaining < slotsLen)
+                return { groupIndex: i, slotIndex: remaining };
+              remaining -= slotsLen;
+            }
+            return { groupIndex: -1, slotIndex: -1 };
+          },
+        };
+      }
+
+      // ----------------------- Undo -----------------------
+      function undo() {
+        const action = state.history.pop();
+        if (!action) return;
+
+        if (action.type === "advance") {
+          // Rimuovi dal dest
+          const destGroup = state.rounds[action.to.r][action.to.g];
+          destGroup.slots[action.to.s] = null;
+          // Rimuovi mark winner dal gruppo sorgente
+          const srcGroup = state.rounds[action.from.r][action.from.g];
+          srcGroup.winnersIds = srcGroup.winnersIds.filter(
+            (id) => id !== action.from.id
+          );
+          state.winnerId = null;
+        } else if (action.type === "select-final") {
+          // Togli marcatura winner nel round finale
+          const srcGroup = state.rounds[action.from.r][action.from.g];
+          srcGroup.winnersIds = srcGroup.winnersIds.filter(
+            (id) => id !== action.from.id
+          );
+          if (state.winnerId === action.from.id) state.winnerId = null;
+        }
+
+        saveState();
+        render();
+      }
+
+      // ----------------------- Generazione del tabellone -----------------------
+      function generateBracket() {
+        // Leggi impostazioni
+        state.mode = $("#mode").value;
+        // Se modalità rumble, leggi il numero di vincitori da ogni rumble
+        if (state.mode === "rumble") {
+          const count = clampInt($("#passRumbleCount").value, 1, 4);
+          state.rumbleWinners = count;
+        } else {
+          state.rumbleWinners = 1;
+        }
+
+        const rawNames = ($("#names").value || "")
+          .split(/\n+/)
+          .map((s) => s.trim())
+          .filter(Boolean);
+        if (rawNames.length < 2) {
+          alert("Inserisci almeno 2 nomi.");
+          return;
+        }
+
+        // Crea participant objects
+        let participants = rawNames.map((name) => ({ id: uid(), name }));
+        // (Opzione shuffle non implementata esplicitamente)
+        if (state.seedMethod === "shuffle")
+          participants = shuffle(participants);
+
+        // Salva input e lista
+        state.namesInput = rawNames.join("\n");
+        state.participants = participants;
+        state.history = [];
+        state.winnerId = null;
+
+        // Costruisci rounds placeholder
+        state.rounds = buildInitialRounds(participants);
+
+        // Persisti + render
+        saveState();
+        render();
+      }
+
+      function clampInt(v, min, max) {
+        let n = parseInt(v, 10);
+        if (Number.isNaN(n)) n = min;
+        return Math.max(min, Math.min(max, n));
+      }
+
+      // ----------------------- Event wiring -----------------------
+
+      // Mostra/nascondi campo rumble quando cambio modalità
+      $("#mode").addEventListener("change", (e) => {
+        if (e.target.value === "rumble") {
+          $("#labelPassRumble").style.display = "block";
+          $("#passRumbleCount").style.display = "block";
+          $("#rumbleHelp").style.display = "block";
+        } else {
+          $("#labelPassRumble").style.display = "none";
+          $("#passRumbleCount").style.display = "none";
+          $("#rumbleHelp").style.display = "none";
+        }
+      });
+
+      // Autosalvataggio del testo nomi
+      $("#names").addEventListener("input", (e) => {
+        state.namesInput = e.target.value;
+        saveState();
+      });
+
+      $("#btn-generate").addEventListener("click", generateBracket);
+      $("#btn-undo").addEventListener("click", undo);
+      $("#btn-reset").addEventListener("click", () => {
+        if (confirm("Azzerare torneo e dati salvati?")) {
+          clearState();
+          // Resetta stato volatile
+          state = {
+            mode: "classic",
+            namesInput: "",
+            participants: [],
+            rounds: [],
+            history: [],
+            winnerId: null,
+            rumbleWinners: 1,
+          };
+          render();
+        }
+      });
+
+      // ----------------------- Ripristino da localStorage -----------------------
+      function reviveState(loaded) {
+        state = {
+          mode: loaded.mode || "classic",
+          namesInput: loaded.namesInput || "",
+          participants: Array.isArray(loaded.participants)
+            ? loaded.participants
+            : [],
+          rounds: Array.isArray(loaded.rounds)
+            ? loaded.rounds.map((grps) =>
+                grps.map((g) => ({
+                  slots: g.slots,
+                  winnersIds: Array.isArray(g.winnersIds) ? g.winnersIds : [],
+                  maxWinners: g.maxWinners,
+                }))
+              )
+            : [],
+          history: Array.isArray(loaded.history) ? loaded.history : [],
+          rumbleWinners: loaded.rumbleWinners || 1,
+          winnerId: loaded.winnerId || null,
+        };
+      }
+
+      (function init() {
+        const saved = loadState();
+        if (saved) reviveState(saved);
+        render();
+      })();
+    </script>
+  </body>
+</html>
